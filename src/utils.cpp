@@ -6,11 +6,11 @@
 void generateTask(TaskFunction_t taskFunction, const char *taskName, void *taskParameters)
 {
     portBASE_TYPE s1;
-    s1 = xTaskCreate(taskFunction, taskName, configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+    s1 = xTaskCreate(taskFunction, taskName, 4096, NULL, configMAX_PRIORITIES, NULL);
 
     if (s1 != pdPASS)
     {
-        // Serial.println("Task creation problem");
+        SERIAL_PORT.println("Task creation problem");
         while (1)
             ;
     }

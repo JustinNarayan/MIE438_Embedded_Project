@@ -3,17 +3,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <Arduino.h>
+#include <utils.h>
 
-static Controller status;
 static ButtonState currentState;
 static ButtonState previousState;
 
 static void updateButtonState();
 static bool isButtonPressed(uint8_t pin);
 
-uint8_t image_count;
-
-void controller_init(Controller *controller, uint8_t display_num_images)
+void controller_init(Controller *controller)
 {
     // Initialize GPIO pins for buttons
     pinMode(BTN_FORWARD_PIN, INPUT_PULLUP);
@@ -23,8 +21,6 @@ void controller_init(Controller *controller, uint8_t display_num_images)
     pinMode(BTN_STOP_PIN, INPUT_PULLUP);
     pinMode(BTN_TOGGLE_DISPLAY, INPUT_PULLUP);
     pinMode(BTN_ENABLE_DISABLE, INPUT_PULLUP);
-
-    image_count = display_num_images;
 
     // Initialize status
     controller->direction = DIRECTION_NONE;
@@ -92,7 +88,7 @@ void controller_update(Controller *controller)
     // Update image
     if (currentState.toggle_display && !previousState.toggle_display)
     {
-        controller->image = (controller->image + 1) % image_count;
+        controller->image = (controller->image + 1) % NUM_IMAGES;
     }
 }
 

@@ -14,7 +14,7 @@ typedef struct
     L298N* right_driver;
 } drivetrain;
 
-void drivetrain_init(drivetrain *driver);
+void drivetrain_init(drivetrain *driver, L298N *left, L298N *right);
 void drivetrain_halt(drivetrain *driver);
 
 #endif

@@ -4,15 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// Button mapping
-#define BTN_FORWARD_PIN 2
-#define BTN_BACKWARD_PIN 3
-#define BTN_LEFT_PIN 4
-#define BTN_RIGHT_PIN 5
-#define BTN_STOP_PIN 6
-#define BTN_TOGGLE_DISPLAY 7
-#define BTN_ENABLE_DISABLE 8
-
 // Enum for direction and turn
 typedef enum
 {
@@ -51,7 +42,7 @@ typedef struct
 } Controller;
 
 // Controller initialization function
-void controller_init(Controller *controller, uint8_t display_num_images);
+void controller_init(Controller *controller);
 
 // Controller update function (call in main loop)
 void controller_update(Controller *status);
