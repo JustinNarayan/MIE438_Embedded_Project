@@ -23,14 +23,18 @@
 #define DRIVETRAIN_RIGHT_EN PB0
 
 // Controller
-#define BTN_FORWARD_PIN 2
-#define BTN_BACKWARD_PIN 3
-#define BTN_LEFT_PIN 4
-#define BTN_RIGHT_PIN 5
-#define BTN_STOP_PIN 6
-#define BTN_TOGGLE_DISPLAY 7
-#define BTN_ENABLE_DISABLE 8
-#define NUM_IMAGES 1
+#define BTN_FORWARD_PIN D5
+#define BTN_BACKWARD_PIN D6
+#define BTN_LEFT_PIN D4
+#define BTN_RIGHT_PIN D7
+#define BTN_STOP_PIN D3
+#define BTN_TOGGLE_DISPLAY D1
+#define BTN_ENABLE_DISABLE D1
+#define NUM_IMAGES D1
+
+// LCD
+#define LCD1602_SCL PB10
+#define LCD1602_SDA PB11
 
 void generateTask(TaskFunction_t taskFunction, const char *taskName,
                   void *taskParameters);
