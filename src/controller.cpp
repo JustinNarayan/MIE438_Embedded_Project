@@ -49,11 +49,11 @@ void controller_update(Controller *controller)
     updateButtonState();
 
     // Update direction
-    if (currentState.forward && !currentState.backward)
+    if (!currentState.stop && (currentState.forward && !currentState.backward))
     {
         controller->direction = DIRECTION_FORWARD;
     }
-    else if (currentState.backward && !currentState.forward)
+    else if (!currentState.stop && (currentState.backward && !currentState.forward))
     {
         controller->direction = DIRECTION_BACKWARD;
     }
@@ -62,12 +62,12 @@ void controller_update(Controller *controller)
         controller->direction = DIRECTION_NONE;
     }
 
-    // Update turn
-    if (currentState.left && !currentState.right)
+    // // Update turn
+    if (!currentState.stop && (currentState.left && !currentState.right))
     {
         controller->turn = TURN_LEFT;
     }
-    else if (currentState.right && !currentState.left)
+    else if (!currentState.stop && (currentState.right && !currentState.left))
     {
         controller->turn = TURN_RIGHT;
     }
@@ -79,17 +79,17 @@ void controller_update(Controller *controller)
     // Update halt
     controller->halt = currentState.stop;
 
-    // Update display
-    if (currentState.enable_disable && !previousState.enable_disable)
-    {
-        controller->display = !controller->display; // Toggle display
-    }
+    // // Update display
+    // if (currentState.enable_disable && !previousState.enable_disable)
+    // {
+    //     controller->display = !controller->display; // Toggle display
+    // }
 
-    // Update image
-    if (currentState.toggle_display && !previousState.toggle_display)
-    {
-        controller->image = (controller->image + 1) % NUM_IMAGES;
-    }
+    // // Update image
+    // if (currentState.toggle_display && !previousState.toggle_display)
+    // {
+    //     controller->image = (controller->image + 1) % NUM_IMAGES;
+    // }
 }
 
 static void updateButtonState()
