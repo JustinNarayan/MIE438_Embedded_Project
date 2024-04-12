@@ -19,15 +19,13 @@ void controller_init(Controller *controller)
     pinMode(BTN_LEFT_PIN, INPUT_PULLUP);
     pinMode(BTN_RIGHT_PIN, INPUT_PULLUP);
     pinMode(BTN_STOP_PIN, INPUT_PULLUP);
-    pinMode(BTN_TOGGLE_DISPLAY, INPUT_PULLUP);
     pinMode(BTN_ENABLE_DISABLE, INPUT_PULLUP);
 
     // Initialize status
     controller->direction = DIRECTION_NONE;
     controller->turn = TURN_NONE;
     controller->halt = false;
-    controller->display = true; // Default to display on
-    controller->image = 0;
+    controller->display = false;
 
     // Initialize button states
     currentState.forward = false;
@@ -35,7 +33,6 @@ void controller_init(Controller *controller)
     currentState.left = false;
     currentState.right = false;
     currentState.stop = false;
-    currentState.toggle_display = false;
     currentState.enable_disable = false;
 
     previousState = currentState;
@@ -79,17 +76,10 @@ void controller_update(Controller *controller)
     // Update halt
     controller->halt = currentState.stop;
 
-    // // Update display
-    // if (currentState.enable_disable && !previousState.enable_disable)
-    // {
-    //     controller->display = !controller->display; // Toggle display
-    // }
-
-    // // Update image
-    // if (currentState.toggle_display && !previousState.toggle_display)
-    // {
-    //     controller->image = (controller->image + 1) % NUM_IMAGES;
-    // }
+    if (currentState.enable_disable && !previousState.enable_disable)
+    {
+        controller->display = !controller->display; // Toggle display
+    }
 }
 
 static void updateButtonState()
@@ -101,7 +91,6 @@ static void updateButtonState()
     currentState.left = isButtonPressed(BTN_LEFT_PIN);
     currentState.right = isButtonPressed(BTN_RIGHT_PIN);
     currentState.stop = isButtonPressed(BTN_STOP_PIN);
-    currentState.toggle_display = isButtonPressed(BTN_TOGGLE_DISPLAY);
     currentState.enable_disable = isButtonPressed(BTN_ENABLE_DISABLE);
 }
 

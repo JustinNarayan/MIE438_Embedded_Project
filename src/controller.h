@@ -27,7 +27,6 @@ typedef struct
     bool left;
     bool right;
     bool stop;
-    bool toggle_display;
     bool enable_disable;
 } ButtonState;
 
@@ -38,7 +37,6 @@ typedef struct
     Turn turn;
     uint8_t halt;
     uint8_t display;
-    uint8_t image;
 } Controller;
 
 // Controller initialization function
