@@ -3,17 +3,19 @@
 #include <utils.h>
 #include <l298n.h>
 #include <drivetrain.h>
+#include <appendage.h>
 #include <controller.h>
 #include <lcd1602.h>
-
-#define ALERT_TIME 500
+#include <rob_09454.h>
 
 // Static variables
 static Controller controller;
-static L298N leftMotor;
-static L298N rightMotor;
+static L298N leftMotor, rightMotor;
+static L298N liftMotor, grabMotor;
 static drivetrain driver;
+static appendage arm;
 static LCD1602 display;
+static ROB_09454 sensor;
 
 static void blinkTask(void *parameters)
 {
@@ -26,60 +28,49 @@ static void blinkTask(void *parameters)
   }
 }
 
-static void alertTask(void *parameters)
-{
-  while (1)
-  { 
-    SERIAL_PORT.println("ALERT");
-    vTaskDelay(ALERT_TIME / portTICK_PERIOD_MS);
-  }
-}
 
 static void pollControllerTask(void* parameters) {
   while(1) {
     controller_update(&controller);
+    vTaskDelay(CONTROLLER_POLL_TIME / portTICK_PERIOD_MS);
   }
 }
 
-static void outputControllerTask(void* parameters) {
+static void drivetrainUpdateTask(void* parameters) {
   while(1) {
-    if(controller.direction == DIRECTION_FORWARD)
-      SERIAL_PORT.print("Forward\t");
-    else if(controller.direction == DIRECTION_BACKWARD)
-      SERIAL_PORT.print("Backward\t");
-    else
-      SERIAL_PORT.print("None\t");
+    // Process the controls
 
-    if(controller.turn == TURN_LEFT)
-      SERIAL_PORT.print("Left\t");
-    else if(controller.turn == TURN_RIGHT)
-      SERIAL_PORT.print("Right\t");
-    else
-      SERIAL_PORT.print("None\t");
+    if(controller.halt) {
+      drivetrain_halt(&driver);
+    } else {
 
-    SERIAL_PORT.println();
+      if(controller.direction == DIRECTION_NONE) {
+        if(controller.turn == TURN_NONE) {
+          drivetrain_halt(&driver);
+        } else {
+          drivetrain_turn_pivot(&driver, controller.turn == TURN_LEFT);
+        }
+      } else {
+        if(controller.turn == TURN_NONE) {
+          drivetrain_forward(&driver, controller.direction == DIRECTION_BACKWARD);
+        } else {
+          drivetrain_turn_moving(&driver, controller.turn == TURN_LEFT, controller.direction == DIRECTION_BACKWARD);
+        }
+      }
 
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+
+    vTaskDelay(DRIVETRAIN_UPDATE_TIME / portTICK_PERIOD_MS);
   }
 }
 
-static void motorTestTask(void* parameters) {
+static void lcdUpdateTask(void* parameters) {
   while(1) {
-    SERIAL_PORT.println("Forward!");
-    L298N_forward(&leftMotor, 0x10);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    if(controller.display != display.enabled) {
+      lcd1602_toggle(&display);
+    }
 
-    SERIAL_PORT.println("Halt!");
-    L298N_halt(&leftMotor);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-
-    SERIAL_PORT.println("Backward!");
-    L298N_forward(&leftMotor, 0x10);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-
-    SERIAL_PORT.println("Halt!");
-    L298N_halt(&leftMotor);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(LCD_UPDATE_TIME / portTICK_PERIOD_MS);
   }
 }
 
@@ -88,31 +79,25 @@ static void initTask(void *parameters)
 
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-
   // Enable LED
   pinMode(LED_PIN, OUTPUT);
 
-  // Instantiate drivetrain
-  // drivetrain_init(&driver, &leftMotor, &rightMotor);
-
-  // Instantiate controller
+  // Initializations
+  drivetrain_init(&driver, &leftMotor, &rightMotor);
+  appendage_init(&arm, &liftMotor, &grabMotor);
   controller_init(&controller);
-
-  // Instantiate LCD
-  // lcd1602_init(&display);
+  lcd1602_init(&display);
 
   // Create blink task
   generateTask(blinkTask, "Blink", NULL);
 
   // Create controller poll task
   generateTask(pollControllerTask, "Controller poll", NULL);
-  
-  // Generate controller output task
-  generateTask(outputControllerTask, "Controller output", NULL);
 
-  // Generate motor test task
-  // L298N_init(&leftMotor, PD0, PD1, PG0);
-  // generateTask(motorTestTask, "Motor test", NULL);
+  // Create update tasks
+  generateTask(drivetrainUpdateTask, "Drivetrain update", NULL);
+  // generateTask(armUpdateTask, "Arm update", NULL);
+  generateTask(lcdUpdateTask, "LCD update", NULL);
 
   SERIAL_PORT.println("Completed init");
   vTaskDelete(NULL);
