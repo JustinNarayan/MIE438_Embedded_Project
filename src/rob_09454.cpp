@@ -6,6 +6,6 @@ void ROB_09454_init(ROB_09454 *sensor, uint8_t pin) {
   pinMode(sensor->pin, INPUT);
 }
 
-uint8_t ROB_09454_read(ROB_09454 *sensor) {
+int ROB_09454_read(ROB_09454 *sensor) {
   return digitalRead(sensor->pin);
 }
