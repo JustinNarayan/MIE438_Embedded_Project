@@ -23,7 +23,7 @@ void lcd1602_init(LCD1602 *display)
     // Init commands
     // lcd1602_command(display, 0x38); // 8-bit MPU, 2-line, small font
     // lcd1602_command(display, 0x01); // clear
-    lcd1602_command(display, 0x0C); // display on, cursor on, blink on
+    lcd1602_command(display, 0x00); // display off, cursor off, blink off
 
     // lcd1602_command(display, 0x02); // return home (cursor?)
     // lcd1602_command(display, 0x38); // 8-bit MPU, 2-line, small font

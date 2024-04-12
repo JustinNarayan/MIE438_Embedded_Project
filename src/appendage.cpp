@@ -13,34 +13,42 @@ void appendage_init(appendage *arm, L298N *lift, L298N *grab)
 void appendage_lift(appendage *arm)
 {
     L298N_forward(arm->lift_driver, LIFT_SPEED);
-    delay(LIFT_TIME);
-    L298N_halt(arm->lift_driver);
 }
+
+void appendage_rest(appendage *arm)
+{
+    L298N_forward(arm->lift_driver, REST_SPEED);
+}
+
 
 void appendage_fall(appendage *arm)
 {
     L298N_backward(arm->lift_driver, FALL_SPEED);
-    delay(FALL_TIME);
-    L298N_halt(arm->lift_driver);
 }
 
 void appendage_grab(appendage *arm)
 {
     L298N_forward(arm->grab_driver, GRAB_SPEED);
-    delay(GRAB_TIME);
-    L298N_halt(arm->grab_driver);
 }
 
 void appendage_release(appendage *arm)
 {
     L298N_backward(arm->grab_driver, RELEASE_SPEED);
-    delay(RELEASE_TIME);
+}
+
+void appendage_halt_lift(appendage *arm)
+{
+    L298N_halt(arm->lift_driver);
+}
+
+void appendage_halt_grab(appendage *arm)
+{
     L298N_halt(arm->grab_driver);
 }
 
 
 void appendage_halt(appendage *arm)
 {
-    L298N_halt(arm->lift_driver);
-    L298N_halt(arm->grab_driver);
+    appendage_halt_lift(arm);
+    appendage_halt_grab(arm);
 }

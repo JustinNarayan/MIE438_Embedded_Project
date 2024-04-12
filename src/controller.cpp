@@ -18,12 +18,20 @@ void controller_init(Controller *controller)
     pinMode(BTN_BACKWARD_PIN, INPUT_PULLUP);
     pinMode(BTN_LEFT_PIN, INPUT_PULLUP);
     pinMode(BTN_RIGHT_PIN, INPUT_PULLUP);
+    
+    pinMode(BTN_LIFT_PIN, INPUT_PULLUP);
+    pinMode(BTN_FALL_PIN, INPUT_PULLUP);
+    pinMode(BTN_GRAB_PIN, INPUT_PULLUP);
+    pinMode(BTN_RELEASE_PIN, INPUT_PULLUP);
+
     pinMode(BTN_STOP_PIN, INPUT_PULLUP);
     pinMode(BTN_ENABLE_DISABLE, INPUT_PULLUP);
 
     // Initialize status
     controller->direction = DIRECTION_NONE;
     controller->turn = TURN_NONE;
+    controller->lift = LIFT_MOTOR_NONE;
+    controller->grab = GRAB_MOTOR_NONE;
     controller->halt = false;
     controller->display = false;
 
@@ -32,6 +40,10 @@ void controller_init(Controller *controller)
     currentState.backward = false;
     currentState.left = false;
     currentState.right = false;
+    currentState.lift = false;
+    currentState.fall = false;
+    currentState.grab = false;
+    currentState.release = false;
     currentState.stop = false;
     currentState.enable_disable = false;
 
@@ -59,7 +71,7 @@ void controller_update(Controller *controller)
         controller->direction = DIRECTION_NONE;
     }
 
-    // // Update turn
+    // Update turn
     if (!currentState.stop && (currentState.left && !currentState.right))
     {
         controller->turn = TURN_LEFT;
@@ -73,9 +85,38 @@ void controller_update(Controller *controller)
         controller->turn = TURN_NONE;
     }
 
+    // Update lift
+    if (!currentState.stop && (currentState.lift && !currentState.fall))
+    {
+        controller->lift = LIFT_MOTOR_LIFT;
+    }
+    else if (!currentState.stop && (currentState.fall && !currentState.lift))
+    {
+        controller->lift = LIFT_MOTOR_FALL;
+    }
+    else
+    {
+        controller->lift = LIFT_MOTOR_NONE;
+    }
+
+    // Update grab
+    if (!currentState.stop && (currentState.grab && !currentState.release))
+    {
+        controller->grab = GRAB_MOTOR_GRAB;
+    }
+    else if (!currentState.stop && (currentState.release && !currentState.grab))
+    {
+        controller->grab = GRAB_MOTOR_RELEASE;
+    }
+    else
+    {
+        controller->grab = GRAB_MOTOR_NONE;
+    }
+
     // Update halt
     controller->halt = currentState.stop;
 
+    // Update LCD 
     if (currentState.enable_disable && !previousState.enable_disable)
     {
         controller->display = !controller->display; // Toggle display
@@ -90,6 +131,12 @@ static void updateButtonState()
     currentState.backward = isButtonPressed(BTN_BACKWARD_PIN);
     currentState.left = isButtonPressed(BTN_LEFT_PIN);
     currentState.right = isButtonPressed(BTN_RIGHT_PIN);
+    
+    currentState.lift = isButtonPressed(BTN_LIFT_PIN);
+    currentState.fall = isButtonPressed(BTN_FALL_PIN);
+    currentState.grab = isButtonPressed(BTN_GRAB_PIN);
+    currentState.release = isButtonPressed(BTN_RELEASE_PIN);
+
     currentState.stop = isButtonPressed(BTN_STOP_PIN);
     currentState.enable_disable = isButtonPressed(BTN_ENABLE_DISABLE);
 }

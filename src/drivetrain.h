@@ -5,10 +5,11 @@
 #include <l298n.h>
 #include <utils.h>
 
-#define FORWARD_SPEED 0x5F
-#define TURN_SPEED_LEAD 0x5F
-#define TURN_SPEED_FOLLOW 0x1F
-#define TURN_SPEED_PIVOT 0x3F
+#define FORWARD_SPEED_LEFT 0xFF
+#define FORWARD_SPEED_RIGHT 0xFF
+#define TURN_SPEED_LEAD 0xFF
+#define TURN_SPEED_FOLLOW 0xCF
+#define TURN_SPEED_PIVOT 0xFF
 
 typedef struct
 {

@@ -19,6 +19,20 @@ typedef enum
     TURN_RIGHT
 } Turn;
 
+typedef enum
+{
+    LIFT_MOTOR_LIFT,
+    LIFT_MOTOR_FALL,
+    LIFT_MOTOR_NONE
+} LiftMotor;
+
+typedef enum
+{
+    GRAB_MOTOR_GRAB,
+    GRAB_MOTOR_RELEASE,
+    GRAB_MOTOR_NONE
+} GrabMotor;
+
 // Record which buttons are pressed
 typedef struct
 {
@@ -26,6 +40,10 @@ typedef struct
     bool backward;
     bool left;
     bool right;
+    bool lift;
+    bool fall;
+    bool grab;
+    bool release;
     bool stop;
     bool enable_disable;
 } ButtonState;
@@ -35,6 +53,8 @@ typedef struct
 {
     Direction direction;
     Turn turn;
+    LiftMotor lift;
+    GrabMotor grab;
     uint8_t halt;
     uint8_t display;
 } Controller;
@@ -42,7 +62,7 @@ typedef struct
 // Controller initialization function
 void controller_init(Controller *controller);
 
-// Controller update function (call in main loop)
+// Controller update function
 void controller_update(Controller *status);
 
 #endif

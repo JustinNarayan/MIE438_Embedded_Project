@@ -13,11 +13,11 @@ void drivetrain_init(drivetrain *driver, L298N *left, L298N *right)
 void drivetrain_forward(drivetrain *driver, bool backward)
 {
     if(backward) {
-        L298N_backward(driver->left_driver, FORWARD_SPEED);
-        L298N_backward(driver->right_driver, FORWARD_SPEED);
+        L298N_backward(driver->left_driver, (uint8_t) FORWARD_SPEED_LEFT);
+        L298N_backward(driver->right_driver, (uint8_t) FORWARD_SPEED_RIGHT);
     } else {
-        L298N_forward(driver->left_driver, FORWARD_SPEED);
-        L298N_forward(driver->right_driver, FORWARD_SPEED);
+        L298N_forward(driver->left_driver, (uint8_t) FORWARD_SPEED_LEFT);
+        L298N_forward(driver->right_driver, (uint8_t) FORWARD_SPEED_RIGHT);
     }
 }
 
