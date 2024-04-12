@@ -8,6 +8,11 @@
 #define COLS 16
 #define LCD1602_I2C_ADDR 0x27
 
+#define LCD_BACKLIGHT 0x08
+
+#define LCD_COMMAND 0
+#define LCD_DATA    1
+
 typedef struct
 {
     uint8_t sdaPin;
